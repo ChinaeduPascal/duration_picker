@@ -65,7 +65,7 @@ class _DialPainter extends CustomPainter {
     // Draw a translucent circle for every hour
     for (var i = 0; i < multiplier; i = i + 1) {
       canvas.drawCircle(centerPoint, radius,
-          Paint()..color = accentColor.withOpacity((i == 0) ? 0.3 : 0.1));
+          Paint()..color = accentColor.withOpacity((i == 0) ? 0.1 : 0.1));
     }
 
     // Draw the inner background circle
@@ -80,17 +80,17 @@ class _DialPainter extends CustomPainter {
 
     // Draw the handle that is used to drag and to indicate the position around the circle
     final handlePaint = Paint()..color = accentColor;
-    final handlePoint = getOffsetForTheta(theta, radius - 10.0);
-    canvas.drawCircle(handlePoint, 20.0, handlePaint);
+    final handlePoint = getOffsetForTheta(theta, radius - 5);
+    canvas.drawCircle(handlePoint, 15.0, handlePaint);
 
     // Draw the Text in the center of the circle which displays hours and mins
     var hours = (multiplier == 0) ? '' : '${multiplier}h ';
-    var minutes = '$minuteHand';
+    var minutes = '${minuteHand}m';
 
     var textDurationValuePainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-            text: '$hours$minutes',
+            text: hours == '' && minutes== '0m'? 'Open end': '$hours$minutes',
             style: Theme.of(context)
                 .textTheme
                 .headline2!
@@ -105,25 +105,25 @@ class _DialPainter extends CustomPainter {
     var textMinPainter = TextPainter(
         textAlign: TextAlign.center,
         text: TextSpan(
-            text: 'min.', //th: ${theta}',
+            text: 'm', //th: ${theta}',
             style: Theme.of(context).textTheme.bodyText2),
         textDirection: TextDirection.ltr)
       ..layout();
-    textMinPainter.paint(
+    /*textMinPainter.paint(
         canvas,
         Offset(
             centerPoint.dx - (textMinPainter.width / 2),
             centerPoint.dy +
                 (textDurationValuePainter.height / 2) -
-                textMinPainter.height / 2));
+                textMinPainter.height / 2));*/
 
     // Draw an arc around the circle for the amount of the circle that has elapsed.
     var elapsedPainter = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
-      ..color = accentColor.withOpacity(0.3)
+      ..color = accentColor.withOpacity(0.1)
       ..isAntiAlias = true
-      ..strokeWidth = radius * 0.12;
+      ..strokeWidth = radius * 0.2;
 
     canvas.drawArc(
       Rect.fromCircle(
@@ -397,24 +397,24 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
     final style = textTheme.subtitle1;
 
     const _minuteMarkerValues = <Duration>[
-      Duration(hours: 0, minutes: 0),
-      Duration(hours: 0, minutes: 5),
-      Duration(hours: 0, minutes: 10),
-      Duration(hours: 0, minutes: 15),
-      Duration(hours: 0, minutes: 20),
-      Duration(hours: 0, minutes: 25),
-      Duration(hours: 0, minutes: 30),
-      Duration(hours: 0, minutes: 35),
-      Duration(hours: 0, minutes: 40),
-      Duration(hours: 0, minutes: 45),
-      Duration(hours: 0, minutes: 50),
-      Duration(hours: 0, minutes: 55),
+      //Duration(hours: 0, minutes: 0),
+      //Duration(hours: 0, minutes: 5),
+      //Duration(hours: 0, minutes: 10),
+      //Duration(hours: 0, minutes: 15),
+      /*Duration(hours: 0, minutes: 20),
+      Duration(hours: 0, minutes: 25),*/
+      //Duration(hours: 0, minutes: 30),
+      /*Duration(hours: 0, minutes: 35),
+      Duration(hours: 0, minutes: 40),*/
+      //Duration(hours: 0, minutes: 45),
+      /*Duration(hours: 0, minutes: 50),
+      Duration(hours: 0, minutes: 55),*/
     ];
 
     final labels = <TextPainter>[];
     for (var duration in _minuteMarkerValues) {
       var painter = TextPainter(
-        text: TextSpan(style: style, text: duration.inMinutes.toString()),
+        text: TextSpan(style: style!.copyWith(fontSize: 8), text: duration.inMinutes.toString()),
         textDirection: TextDirection.ltr,
       )..layout();
       labels.add(painter);
@@ -455,7 +455,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
             selectedValue: selectedDialValue,
             labels: _buildMinutes(theme.textTheme),
             backgroundColor: backgroundColor,
-            accentColor: themeData.accentColor,
+            accentColor: Colors.black,
             theta: _theta.value,
             textDirection: Directionality.of(context),
           ),
